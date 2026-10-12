@@ -26,14 +26,18 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
-          bundler-cache: true
+
+      # 与 GitHub Pages 官方构建环境保持一致：直接安装 github-pages gem，
+      # 不使用 bundler（避免 gem 被装进仓库内的 vendor/bundle 后被 Jekyll 误读）
+      - name: Install GitHub Pages gem
+        run: gem install github-pages
 
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
 
       - name: Build with Jekyll
-        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        run: jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
 
