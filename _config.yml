@@ -1,0 +1,117 @@
+# =============================================================================
+# HONG.github.io 站点配置
+# 主题：Minimal Mistakes（通过 jekyll-remote-theme 远程加载，无需本地维护主题源码）
+# 升级主题只需修改下方 remote_theme 的版本号，详见 README.md「运维管理」
+# =============================================================================
+
+# ---- 远程主题（jekyll-remote-theme，GitHub Pages 官方支持）----
+# 可选版本标签见 https://github.com/mmistakes/minimal-mistakes/tags
+remote_theme: "mmistakes/minimal-mistakes@4.28.1"
+
+# ---- 皮肤 ----
+# Firefly themeColor.hue = 220（蓝色系），default 皮肤的蓝灰色调最接近
+# 可选：default / air / aqua / contrast / dark / dirt / neon / mint / plum / sunrise
+minimal_mistakes_skin: "default"
+
+# ---- 站点基础信息（迁移自 Firefly src/config/siteConfig.ts）----
+title: "溄"                      # Firefly: siteConfig.title
+subtitle: "HONG"                 # Firefly: siteConfig.subtitle
+description: "HONG的个人博客"     # Firefly: siteConfig.description
+url: "https://yhongq.github.io"  # TODO: 确认为你的 GitHub 用户名主页（格式 https://<用户名>.github.io）
+baseurl: ""
+repository: "YHongQ/HONG.github.io"
+locale: "zh-CN"                  # Firefly: lang = "zh_CN"
+timezone: "Asia/Shanghai"        # Firefly: siteConfig.timezone
+
+# ---- 作者名片（迁移自 Firefly src/config/profileConfig.ts，显示在左侧边栏）----
+author:
+  name: "溄"                                # Firefly: profileConfig.name
+  avatar: "/assets/images/avatar.jpg"       # Firefly: profileConfig.avatar（head.jpg）
+  bio: "Hello, I'm HONG !"                  # Firefly: profileConfig.bio
+  location: "China"
+  email: "hongqiang.yan@qq.com"             # Firefly: profileConfig.links[Email]
+  links:
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: "mailto:hongqiang.yan@qq.com"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/YHongQ/"
+    - label: "QQ"
+      icon: "fab fa-fw fa-qq"
+      url: "https://qm.qq.com/q/SqIlKaK9sy"
+
+# ---- 页脚社交链接 ----
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/YHongQ/"
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: "mailto:hongqiang.yan@qq.com"
+
+# ---- 首页文章列表（迁移自 Firefly postListLayout / pagination）----
+paginate: 10               # Firefly: pagination.postsPerPage
+paginate_path: /page:num/
+words_per_minute: 200
+enable_copy_code_button: true
+breadcrumbs: true
+
+# ---- 站内搜索（Firefly: navBarSearchConfig = PageFind）----
+search: true
+search_full_content: true
+search_provider: "lunr"    # lunr 为纯静态搜索，无需外部服务
+
+# ---- 归档页（Firefly: 导航「归档 / 分类 / 标签」）----
+# GitHub Pages 不支持 jekyll-archives 插件，使用 liquid 模式 + 手工归档页
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/
+
+# ---- 评论系统（Firefly: commentConfig，暂留空；后续可填 giscus / utterances / disqus）----
+comments:
+  provider:
+
+# ---- 文章 / 页面默认设置 ----
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      share: true
+      related: true
+  # _pages
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+
+include:
+  - _pages
+
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - docs
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+
+# ---- 插件（均由 github-pages gem 提供，均在 GitHub Pages 白名单内）----
+plugins:
+  - jekyll-remote-theme
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jekyll-include-cache

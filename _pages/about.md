@@ -1,0 +1,29 @@
+---
+title: "关于"
+permalink: /about/
+author_profile: true
+---
+
+# 关于我 / About Me
+
+你好！我是 **溄**（HONG）。
+
+## 🛠️ 关于本站
+
+这个是记录本人学习记录的博客网站，主要记录本人在学习过程中遇到的问题、解决方法、学习心得等。
+
+- 🗓️ 站点创建于 **2026-05-16**
+- 🌏 时区：Asia/Shanghai
+- 🧱 主题：Minimal Mistakes（GitHub Pages 远程主题）
+
+## 📫 联系方式
+
+如果你想和我交流技术问题，分享有趣的想法，或者只是想打个招呼，欢迎通过以下方式联系我：
+
+- 💻 **GitHub**: [YHongQ](https://github.com/YHongQ/)
+- ✉️ **Email**: [hongqiang.yan@qq.com](mailto:hongqiang.yan@qq.com)
+- 🐧 **QQ 交流**: [2142479640](https://qm.qq.com/q/SqIlKaK9sy)
+
+---
+
+*感谢你的来访！希望在这里能找到对你有用的内容！*

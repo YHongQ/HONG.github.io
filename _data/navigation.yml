@@ -1,0 +1,13 @@
+# 顶部导航（迁移自 Firefly src/config/navBarConfig.ts）
+# Firefly 的「友链 / 留言板 / 相册 / 赞助」等页面待后续博客内容迁移时再逐步补充
+main:
+  - title: "首页"
+    url: /
+  - title: "归档"
+    url: /year-archive/
+  - title: "分类"
+    url: /categories/
+  - title: "标签"
+    url: /tags/
+  - title: "关于"
+    url: /about/
