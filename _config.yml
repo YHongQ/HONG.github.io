@@ -31,9 +31,7 @@ author:
   location: "China"
   email: "hongqiang.yan@qq.com"             # Firefly: profileConfig.links[Email]
   links:
-    - label: "Email"
-      icon: "fas fa-fw fa-envelope-square"
-      url: "mailto:hongqiang.yan@qq.com"
+    # 注意: Email 由上面的 author.email 自动渲染, 无需在此重复添加
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/YHongQ/"
