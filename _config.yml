@@ -17,7 +17,7 @@ minimal_mistakes_skin: "catppuccin_latte"
 title: "溄"                      # Firefly: siteConfig.title
 subtitle: "HONG"                 # Firefly: siteConfig.subtitle
 description: "HONG的个人博客"     # Firefly: siteConfig.description
-url: "https://yhongq.github.io"  # TODO: 确认为你的 GitHub 用户名主页（格式 https://<用户名>.github.io）
+url: "https://yhongq.github.io"  # 用户主页（仓库 YHongQ.github.io 与用户名一致）
 baseurl: ""
 repository: "YHongQ/YHongQ.github.io"
 locale: "zh-CN"                  # Firefly: lang = "zh_CN"
@@ -86,6 +86,7 @@ defaults:
       read_time: true
       share: true
       related: true
+      permalink: /posts/:title/   # 固定文章链接格式，避免中文分类进入 URL
   # _pages
   - scope:
       path: "_pages"
@@ -93,6 +94,19 @@ defaults:
     values:
       layout: single
       author_profile: true
+  # _gallery
+  - scope:
+      path: ""
+      type: gallery
+    values:
+      layout: single
+      author_profile: false
+
+# ---- 画廊集合（图片欣赏栏目）----
+collections:
+  gallery:
+    output: true
+    permalink: /gallery/:path/
 
 include:
   - _pages

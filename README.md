@@ -1,6 +1,6 @@
-# HONG.github.io
+# yhongq.github.io
 
-基于 **GitHub Pages + Jekyll Remote Theme（Minimal Mistakes）** 的个人博客运维方案。
+基于 **GitHub Pages + Jekyll Remote Theme（Minimal Mistakes）** 的个人博客。
 主题以远程方式加载（`remote_theme`），仓库内不保存主题源码，升级主题只需改一行版本号。
 
 ## 目录结构
@@ -8,77 +8,48 @@
 ```
 .
 ├── .github/workflows/pages-deploy.yml   # GitHub Actions 自动构建部署
-├── Gemfile                              # github-pages gem（与 Pages 构建环境一致）
-├── _config.yml                          # 站点配置（Firefly 迁移后的全部配置都在这里）
+├── Gemfile                              # github-pages gem（本地开发用）
+├── _config.yml                          # 站点配置（全部配置都集中在这里）
 ├── _data/navigation.yml                 # 顶部导航菜单
-├── _includes/head/custom.html           # 自定义 <head>（favicon）
 ├── index.html                           # 首页（文章卡片列表 + 分页）
-├── _pages/                              # 静态页面（关于 / 归档 / 分类 / 标签）
-├── _posts/                              # 博客文章（当前为空，后续按需迁移）
-└── assets/images/                       # 头像 avatar.jpg、favicon.png
+├── _pages/                              # 静态页面（关于 / 归档 / 分类 / 标签 / 图片欣赏）
+├── _posts/                              # 博客文章（YYYY-MM-DD-slug.md）
+├── _gallery/                            # 图片欣赏集合（每张图一个文档）
+└── assets/images/                       # 头像、文章配图（posts/）、画廊图（gallery/）
 ```
 
 ## 本地开发
 
 ```bash
-# 1. 安装依赖（需要 Ruby >= 3.1 与 Bundler）
 bundle install
-
-# 2. 本地预览（默认 http://127.0.0.1:4000）
-bundle exec jekyll serve
-
-# 3. 本地构建检查
-bundle exec jekyll build
+bundle exec jekyll serve   # http://127.0.0.1:4000
 ```
-
-> 请始终使用 `bundle exec jekyll ...`，确保本地环境与 GitHub Pages 一致。
 
 ## 部署（GitHub Pages）
 
-1. 首次推送后，进入仓库 **Settings → Pages → Build and deployment → Source**，选择 **GitHub Actions**。
-2. 之后每次 `git push origin main` 都会自动触发 `.github/workflows/pages-deploy.yml` 完成构建与发布。
-3. 在 **Settings → Pages** 中确认 Custom domain（如使用自定义域名）与 **Enforce HTTPS**。
+1. 每次 `git push origin main` 自动触发 `.github/workflows/pages-deploy.yml` 完成构建与发布（约 1 分钟）。
+2. 仓库 **Settings → Pages → Build and deployment → Source** 应保持 **GitHub Actions**。
 
 ## 运维管理
 
 | 场景 | 操作 |
 | --- | --- |
-| 升级主题 | 修改 `_config.yml` 中 `remote_theme: "mmistakes/minimal-mistakes@<新版本>"`，提交推送即可（版本标签见主题仓库 Tags 页） |
-| 换皮肤 | 修改 `_config.yml` 中 `minimal_mistakes_skin`（default/air/aqua/contrast/dark/dirt/neon/mint/plum/sunrise） |
+| 升级主题 | 修改 `_config.yml` 中 `remote_theme: "mmistakes/minimal-mistakes@<新版本>"`，提交推送即可 |
+| 换皮肤 | 修改 `_config.yml` 中 `minimal_mistakes_skin`（catppuccin_latte / dark / aqua / neon / plum 等 12 款） |
 | 改导航 | 编辑 `_data/navigation.yml` |
 | 改个人信息/社交链接 | 编辑 `_config.yml` 的 `author` 与 `footer` 段 |
-| 发布文章 | 在 `_posts/` 下新建 `YYYY-MM-DD-标题.md`，front matter 见主题文档 |
-| 接入评论 | `_config.yml` 的 `comments.provider` 填 `giscus` / `utterances` / `disqus` 并补齐对应参数 |
+| 发布文章 | 在 `_posts/` 下新建 `YYYY-MM-DD-slug.md`，front matter 含 `title / date / categories / tags / description` |
+| 增加画廊图片 | 图片放入 `assets/images/gallery/`，在 `_gallery/` 新建文档并设置 `header.teaser` |
+| 接入评论 | `_config.yml` 的 `comments.provider` 填 `giscus` / `utterances` / `disqus` 并补齐参数 |
 | 接入统计 | `_config.yml` 的 `analytics` 段（google / goatcounter / umami / matomo / cloudflare / fathom） |
 
-## Firefly → Minimal Mistakes 配置迁移对照
+## 内容迁移说明（Firefly → 本站）
 
-| Firefly 配置 | 本仓库配置 |
-| --- | --- |
-| `siteConfig.title = 溄` | `title: "溄"` |
-| `siteConfig.subtitle = HONG` | `subtitle: "HONG"` |
-| `siteConfig.description` | `description` |
-| `siteConfig.lang = zh_CN` | `locale: "zh-CN"` |
-| `siteConfig.timezone` | `timezone: "Asia/Shanghai"` |
-| `siteConfig.themeColor.hue = 220` | `minimal_mistakes_skin: "default"`（蓝灰调，最接近） |
-| `profileConfig.avatar` | `author.avatar` → `assets/images/avatar.jpg` |
-| `profileConfig.name / bio` | `author.name` / `author.bio` |
-| `profileConfig.links`（QQ/Email/GitHub） | `author.links` + `footer.links` |
-| `navbar.links`（主页/归档/友链/留言板/我的/关于/链接） | `_data/navigation.yml`（首页/归档/分类/标签/关于；友链等后续补充） |
-| `postListLayout` + `pagination.postsPerPage = 10` | `paginate: 10`（首页卡片列表） |
-| `navBarSearchConfig`（PageFind） | `search: true` + `search_provider: "lunr"` |
-| 分类 / 标签页 | `_pages/category-archive.md` / `_pages/tag-archive.md` |
-| `about` 页内容 | `_pages/about.md`（含建站日期、联系方式） |
-| favicon `/favicon/cat.png` | `assets/images/favicon.png` + `_includes/head/custom.html` |
-| `commentConfig`（Twikoo） | `comments.provider`（暂留空，后续接入 giscus 等） |
-
-暂未迁移的 Firefly 特性（待后续博客内容迁移时按需处理）：公告栏、音乐播放器、
-看板娘、樱花特效、相册/番组计划页、Microsoft Clarity 统计、RSS 图标入口
-（主题已内置 Atom Feed，地址 `/feed.xml`）。
-
-## 注意事项
-
-- `_config.yml` 中 `url` 默认为 `https://yhongq.github.io`，请确认与你的 GitHub 用户名一致，
-  否则会导致样式/资源 404。
-- 本方案不依赖 `github-pages` 之外的白名单外插件，可直接使用 GitHub Pages 原生构建能力。
-- 文章图片统一放 `assets/images/`，正文用 `/assets/images/xxx.png` 引用。
+- **文章**：18 篇已迁移（CANN 系列 5 篇 + C++/Java 技术笔记 13 篇），统一了分类（`技术博客` / `学习笔记`），
+  修正了标签错误（中文逗号粘连、C/C++ 错标、句子式标签），补全了缺失的摘要，修复了旧站外链。
+  Firefly 自带的主题演示文章与一篇草稿（`huawei-tiling-design.md`，draft 标记）未发布。
+- **图片**：文章配图 532 张已统一压缩为 WebP（最长边 1000px），**125.3 MB → 11.4 MB**；
+  画廊精选 12 张（最长边 1600px，1.6 MB）。新增图片请沿用相同压缩规格，控制仓库体积。
+- **图片欣赏**：`/gallery/` 栏目使用 Minimal Mistakes 的 collection + grid 布局，点击图片可查看大图。
+- **未迁移的 Firefly 特性**（按需后续处理）：公告栏、音乐播放器、看板娘、樱花特效、番组计划页、
+  Microsoft Clarity 统计、网页 favicon 图标（已按要求移除）。

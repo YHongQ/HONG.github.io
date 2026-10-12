@@ -1,0 +1,1922 @@
+---
+layout: single
+title: "Redis黑马课程学习"
+date: 2026-05-31
+categories: ["学习笔记"]
+tags: ["Redis", "黑马课程", "学习笔记", "Java"]
+description: "Redis 黑马课程学习笔记汇总。"
+---
+
+# Redis黑马课程学习
+
+本课程介绍学习Redis的基本概念、数据结构、操作命令、集群部署等。
+
+## 1. Redis介绍
+
+Redis是一个基于内存的键值存储数据库，用于存储和检索数据。它支持多种数据结构，如字符串、列表、哈希、集合等。
+
+- 支持数据持久化。
+
+**NoSQL数据库** ：是一种非关系型数据库，它不使用关系型数据库的表和行结构，而是使用键值对存储数据。
+![](/assets/images/posts/redis-heima-course/1779432758589.webp)
+
+## 2. Redis 常用命令
+
+### 2.1 Redis 数据结构
+
+1. Redis是键值对存储数据库，每个键对应一个值。
+2. Redis支持多种数据结构，如字符串、列表、哈希、集合等。
+3. 不同的数据结构有不同的操作命令。
+   ![](/assets/images/posts/redis-heima-course/1779518651818.webp)
+
+### 2.2 Redis 常用命令
+
+1. KEYS  命令：用于查看键名。
+
+   - 语法：KEY [pattern]
+   - 示例：KEY * # 查看所有键名
+   - 示例：KEY *key* # 查看包含"key"的键名
+2. help [command] 命令：用于查看指定命令的详细信息。
+3. del 命令：用于删除指定键。
+
+   - 语法：del [key]
+   - 示例：del key1 key2 # 删除key1和key2
+4. exist 命令：用于检查键是否存在。
+
+   - 语法：exists [key]
+   - 返回值：1表示存在，0表示不存在
+5. expire 命令：用于设置键的过期时间,有效期到期后键将自动删除。
+
+   - 语法：expire [key] [seconds]
+   - 示例：expire key1 60 # 设置key1的过期时间为60秒
+   - 返回值：1表示设置成功，0表示设置失败
+6. ttl 命令：用于查看键的过期时间。
+
+   - 语法：ttl [key]
+   - 示例：ttl key1 # 查看key1的过期时间
+   - 返回值：-1表示永不过期，秒为单位
+
+### 2.3 String 类型（Value 为字符串）命令
+
+1. SET 命令：用于设置键值对。
+
+   - 语法：SET [key] [value]
+   - 示例：SET key1 value1 # 设置key1的值为value1
+   - 返回值：OK表示设置成功
+2. GET 命令：用于获取键值对。
+
+   - 语法：GET [key]
+   - 示例：GET key1 # 获取key1的值
+   - 返回值：value1
+3. MSET 命令：用于设置多个键值对。
+
+   - 语法：MSET [key] [value] ...
+   - 示例：MSET key1 value1 key2 value2 # 设置key1和key2的值
+   - 返回值：OK表示设置成功
+4. MGET 命令：用于获取多个键值对。
+
+   - 语法：MGET [key] ...
+   - 示例：MGET key1 key2 # 获取key1和key2的值
+   - 返回值：value1 value2
+5. INCR 命令：用于将键的值增加1。（仅对数值型键值对有效，其他类型键会报错。）
+
+   - 语法：INCR [key]
+   - 示例：INCR key1 # 将key1的值增加1
+6. INCRBY 命令：用于将键的值增加指定的增量。
+
+   - 语法：INCRBY [key] [increment]
+   - 示例：INCRBY key1 5 # 将key1的值增加5
+7. DECR 命令：用于将键的值减少1。（仅对数值型键值对有效，其他类型键会报错。）
+
+   - 语法：DECR [key]
+   - 示例：DECR key1 # 将key1的值减少1
+8. INCRBYFLOAT 命令：用于将键的值增加指定的浮点数增量。
+
+   - 语法：INCRBYFLOAT [key] [increment]
+   - 示例：INCRBYFLOAT key1 5.0 # 将key1的值增加5.0
+9. SETNX 命令：用于设置键值对，仅当键不存在时才设置。
+
+   - 语法：SETNX [key] [value]
+   - 示例：SETNX key1 value1 # 如果key1不存在，设置key1的值为value1
+   - 返回值：1表示设置成功，0表示键已存在
+10. SETEX 命令：用于设置键值对，并设置过期时间。
+
+    - 语法：SEEX [key] [seconds] [value]
+    - 示例：SEEX key1 60 value1 # 设置key1的值为value1，过期时间为60秒
+    - 返回值：OK表示设置成功
+
+---
+
+> Redis没有表结构，不存在唯一索引，因此在键值对上对键进行**层级结构命名**，多个单词间用":"分隔。
+>
+> 示例：user:123:info
+>
+> 项目：业务名：类型：键值
+
+---
+
+### 2.4 Hash 类型（Value 为哈希表）命令
+
+- Hash 类型，Value是一个无序字典集合，类似Java中的HashMap。
+- 因为值为哈希表，所以Hash类型支持键值对的存储和检索。
+
+1. HSET 命令：用于设置哈希表的键值对。
+
+   - 语法：HSET [key] [field] [value]
+   - 示例：HSET key1 field1 value1 # 设置key1的哈希表字段field1的值为value1
+   - 返回值：OK表示设置成功
+2. HGET 命令：用于获取哈希表的键值对。
+
+   - 语法：HGET [key] [field]
+   - 示例：HGET key1 field1 # 获取key1的哈希表字段field1的值
+   - 返回值：value1
+3. HGETALL 命令：用于获取哈希表的所有键值对。
+
+   - 语法：HGETALL [key]
+   - 示例：HGETALL key1 # 获取key1的所有哈希表键值对
+   - 返回值：field1:value1 field2:value2 ...
+4. HDEL 命令：用于删除哈希表的键值对。
+
+   - 语法：HDEL [key] [field] ...
+   - 示例：HDEL key1 field1 field2 # 删除key1的哈希表字段field1和field2
+   - 返回值：OK表示删除成功
+5. HMSET 命令：用于设置多个哈希表的键值对。
+
+   - 语法：HMSET [key] [field] [value] ...
+   - 示例：HMSET key1 field1 value1 field2 value2 # 设置key1的哈希表字段field1和field2的值
+   - 返回值：OK表示设置成功
+6. HMGET 命令：用于获取多个哈希表的键值对。
+
+   - 语法：HMGET [key] [field] ...
+   - 示例：HMGET key1 field1 field2 # 获取key1的哈希表字段field1和field2的值
+   - 返回值：value1 value2
+7. HKEYS 命令：用于获取哈希表的所有键。
+
+   - 语法：HKEYS [key]
+   - 示例：HKEYS key1 # 获取key1的所有哈希表字段
+   - 返回值：field1 field2 ...
+8. HVALS 命令：用于获取哈希表的所有值。
+
+   - 语法：HVALS [key]
+   - 示例：HVALS key1 # 获取key1的所有哈希表字段值
+   - 返回值：value1 value2 ...
+9. HINCRBY 命令：用于将哈希表的键值对增加指定的增量。
+
+   - 语法：HINCRBY [key] [field] [increment]
+   - 示例：HINCRBY key1 field1 5 # 将key1的哈希表字段field1的值增加5
+   - 返回值：value1
+10. HSETNX 命令：用于设置哈希表的键值对，仅当键不存在时才设置。
+
+    - 语法：HSETNX [key] [field] [value]
+    - 示例：HSETNX key1 field1 value1 # 如果key1的哈希表字段field1不存在，设置key1的哈希表字段field1的值为value1
+    - 返回值：1表示设置成功，0表示键已存在
+
+### 2.5 List 类型（Value 为列表）命令
+
+- List 类型，Value是一个有序列表，类似Java中的LinkedList,可视为双向链表。
+- 特点是：有序、元素可重复、插入和删除快、查询效率低。
+
+1. LPUSH 命令：用于将元素插入到列表的左端。
+
+   - 语法：LPUSH [key] [value]
+   - 示例：LPUSH key1 value1 # 将value1插入到列表key1的左端
+   - 返回值：列表的长度
+2. RPUSH 命令：用于将元素插入到列表的右端。
+
+   - 语法：RPUSH [key] [value]
+   - 示例：RPUSH key1 value1 # 将value1插入到列表key1的右端
+   - 返回值：列表的长度
+3. LPOP 命令：用于从列表的左端弹出元素。**如果列表为空，返回NULL**。
+
+   - 语法：LPOP [key]
+   - 示例：LPOP key1 # 从列表key1的左端弹出元素
+   - 返回值：value1
+4. RPOP 命令：用于从列表的右端弹出元素。**如果列表为空，返回NULL**
+
+   - 语法：RPOP [key]
+   - 示例：RPOP key1 # 从列表key1的右端弹出元素
+   - 返回值：value1
+5. LRANGE 命令：用于获取列表的指定范围内的元素。
+
+   - 语法：LRANGE [key] [start] [end]
+   - 示例：LRANGE key1 0 1 # 获取列表key1的第0个元素到第1个元素
+   - 返回值：value1 value2
+6. LLEN 命令：用于获取列表的长度。
+
+   - 语法：LLEN [key]
+   - 示例：LLEN key1 # 获取列表key1的长度
+   - 返回值：2
+7. BLPOP 命令：用于从列表的左端弹出元素，**若列表为空则阻塞等待**。
+
+   - 语法：BLPOP [key] [timeout]
+   - 示例：BLPOP key1 60 # 从列表key1的左端弹出元素，若列表为空则阻塞等待60秒
+   - 返回值：value1
+   - 说明：若列表key1为空，BLPOP命令会阻塞等待60秒，若60秒内有元素插入到列表key1，BLPOP命令会立即返回该元素。
+   - 若60秒内没有元素插入到列表key1，BLPOP命令会返回NULL。
+8. BRPOP 命令：用于从列表的右端弹出元素，**若列表为空则阻塞等待**。
+
+---
+
+1. 如何利用List结构实现队列
+   - 入口和出口在不同的侧
+2. 如何利用List结构实现栈
+   - 入口和出口都在列表的同侧
+3. 如何利用List结构实现阻塞队列
+   - 入口和出口在不同的侧
+   - 出队是BLPOP命令，入队是LPUSH命令，通过等待BLPOP命令的超时时间，实现阻塞队列。
+
+### 2.6 Set 类型（Value 为集合）命令
+
+- Set 类型，Value是一个无序集合，类似Java中的HashSet,可视为哈希表的特殊实现。
+- 特点是：无序、元素不可重复、插入和删除快、查询效率高。
+
+1. SADD 命令：用于将元素插入到集合中。
+
+   - 语法：SADD [key] [value]
+   - 示例：SADD key1 value1 # 将value1插入到集合key1中
+   - 返回值：OK表示插入成功
+2. SREM 命令：用于从集合中删除元素。
+
+   - 语法：SREM [key] [value]
+   - 示例：SREM key1 value1 # 从集合key1中删除元素value1
+   - 返回值：OK表示删除成功
+   - 说明：若集合key1中不存在元素value1，SREM命令会返回OK。
+3. SCARD 命令：用于获取集合的元素数量。
+
+   - 语法：SCARD [key]
+   - 示例：SCARD key1 # 获取集合key1的元素数量
+4. SISMEMBER 命令：用于判断元素是否在集合中。
+
+   - 语法：SISMEMBER [key] [value]
+   - 示例：SISMEMBER key1 value1 # 判断集合key1中是否存在元素value1
+   - 返回值：1表示存在，0表示不存在
+   - 说明：若集合key1中不存在元素value1，SISMEMBER命令会返回0。
+   - 若集合key1中存在元素value1，SISMEMBER命令会返回1。
+5. SMEMBERS 命令：用于获取集合中的所有元素。
+
+   - 语法：SMEMBERS [key]
+   - 示例：SMEMBERS key1 # 获取集合key1中的所有元素
+   - 返回值：value1 value2 ...
+6. SINTER 命令：用于获取多个集合的交集。
+
+   - 语法：SINTER [key1] [key2] ...
+   - 示例：SINTER key1 key2 # 获取集合key1和集合key2的交集
+   - 返回值：value1 value2 ...
+7. SUNION 命令：用于获取多个集合的并集。
+
+   - 语法：SUNION [key1] [key2] ...
+   - 示例：SUNION key1 key2 # 获取集合key1和集合key2的并集
+   - 返回值：value1 value2 ...
+8. SDIFF 命令：用于获取多个集合的差集。
+
+   - 语法：SDIFF [key1] [key2] ...
+   - 示例：SDIFF key1 key2 # 获取集合key1和集合key2的差集
+   - 返回值：value1 value2 ...
+
+### 2.7 SortedSet 类型（Value 为有序集合）命令
+
+- SortedSet 类型，Value是一个有序集合，类似Java中的TreeSet功能，但是redis中底层是一个跳表（SkipList）加hash表。通过每个元素带一个score属性，对元素根据score排序。
+- 特点是：可排序，查询效率高。
+
+1. ZADD 命令：用于将元素插入到有序集合中。
+
+   - 语法：ZADD [key] [score] [value]
+   - 示例：ZADD key1 100 value1 # 将value1插入到有序集合key1中，score为100
+   - 返回值：OK表示插入成功
+2. ZREM 命令：用于从有序集合中删除元素。
+
+   - 语法：ZREM [key] [value]
+   - 示例：ZREM key1 value1 # 从有序集合key1中删除元素value1
+   - 返回值：OK表示删除成功
+   - 说明：若有序集合key1中不存在元素value1，ZREM命令会返回OK。
+3. ZCARD 命令：用于获取有序集合的元素数量。
+
+   - 语法：ZCARD [key]
+   - 示例：ZCARD key1 # 获取有序集合key1的元素数量
+   - 返回值：2
+   - 说明：有序集合key1中存在2个元素。
+4. ZSCORE 命令：用于获取有序集合中元素的score值。
+
+   - 语法：ZSCORE [key] [value]
+   - 示例：ZSCORE key1 value1 # 获取有序集合key1中元素value1的score值
+   - 返回值：100
+   - 说明：有序集合key1中元素value1的score值为100。
+   - 若有序集合key1中不存在元素value1，ZSCORE命令会返回NULL。
+5. ZRANK 命令：用于获取有序集合中元素的排名。
+
+   - 语法：ZRANK [key] [value]
+   - 示例：ZRANK key1 value1 # 获取有序集合key1中元素value1的排名
+   - 返回值：0
+   - 说明：有序集合key1中元素value1的排名为0，从0开始计数。
+   - 若有序集合key1中不存在元素value1，ZRANK命令会返回-1。
+6. ZCOUNT 命令：用于获取有序集合中范围元素的数量。
+
+   - 语法：ZCOUNT [key] [min] [max]
+   - 示例：ZCOUNT key1 0 100 # 获取有序集合key1中score在0到100之间的元素数量
+   - 返回值：2
+   - 说明：有序集合key1中score在0到100之间的元素数量为2。
+7. ZINCRBY 命令：用于对有序集合中元素的score值进行增量操作。
+
+   - 语法：ZINCRBY [key] [increment] [value]
+   - 示例：ZINCRBY key1 10 value1 # 对有序集合key1中元素value1的score值进行10的增量操作
+   - 返回值：110
+   - 说明：有序集合key1中元素value1的score值为110。
+
+---
+
+> 默认排序是按score值升序排序。
+
+## 3. Redis 的JAVA客户端
+
+1. Jedis 是一个基于Java的Redis客户端，用于连接Redis服务器并执行Redis命令。 线程不安全的
+2. Lettuce 是一个基于Java的Redis客户端，用于连接Redis服务器并执行Redis命令。 线程安全的。支持Redis的哨兵模式、集群模式、管道模式
+3. Redisson 是一个基于Java的Redis客户端，用于连接Redis服务器并执行Redis命令。
+
+> Spring Data Redis 是一个基于Java的Redis客户端，用于连接Redis服务器并执行Redis命令。
+
+### 3.1 Jedis 客户端
+
+1. 引入Maven依赖
+
+```xml
+   <dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>3.7.0</version>
+    </dependency>
+```
+
+2. 连接Redis服务器
+
+```java
+
+package COM.HONG.test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import redis.clients.jedis.Jedis;
+
+public class JedisConnectTest {
+    private Jedis jedis;
+
+    @BeforeEach
+    public void setUp() {
+        jedis = new Jedis("127.0.0.1", 6379);
+        jedis.select(0);
+        // 测试是否连接上Redis
+        String result = jedis.ping();
+
+        if (result.equals("PONG")) {
+            System.out.println("Redis连接成功");
+        } else {
+            System.out.println("Redis连接失败");
+        }
+    }
+
+    @Test
+    public void testConnect() {
+        // 设置数据
+        jedis.set("Years", "2023");
+        // 获取数据
+        String value = jedis.get("Years");
+        // 打印获取到的值
+        System.out.println("获取到的值: " + value);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (jedis != null) {
+            jedis.close();
+        }
+        System.out.println("Redis连接已关闭");
+    }
+}
+```
+
+3. Jedis 连接池
+
+- 连接池可以提高Redis客户端的性能，避免频繁创建和销毁连接。
+
+```java
+
+package COM.HONG.test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
+public class JedisPoolConnectTest {
+    // 连接池
+    private static JedisPool pool;
+    // 连接池配置
+    static {
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(10); // 最大连接数
+        poolConfig.setMaxIdle(5); // 最大空闲连接数
+
+        poolConfig.setMinIdle(0); // 最小空闲连接数
+
+        pool = new JedisPool(poolConfig, "127.0.0.1", 6379);
+        Jedis jedis = pool.getResource();
+
+    }
+
+    // 测试连接池
+    @Test
+    public void testConnect() {
+        Jedis jedis = pool.getResource();
+        if (jedis != null) {
+            System.out.println(jedis.ping());
+        }
+        String value = jedis.get("Years");
+        System.out.println("获取到的值: " + value);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (pool != null) {
+            pool.close();
+        }
+        System.out.println("Redis连接池已关闭");
+    }
+}
+
+```
+
+4. Spring Data Redis
+
+- Spring Data Redis 是一个基于Java的Redis客户端，用于连接Redis服务器并执行Redis命令。它提供了一个高层次的抽象，使得开发者可以更方便地使用Redis。
+
+![](/assets/images/posts/redis-heima-course/1779526576313.webp)
+
+* 同样使用Spring-Boot工程，引入Spring Data Redis依赖。
+
+```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+```
+
+- 配置Redis连接
+
+```yaml
+
+# 配置Redis连接
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+#      password:
+      timeout: 60s
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+```
+
+- 测试代码
+
+```java
+package com.hong.redisproj2;
+
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+
+@SpringBootTest
+class Redisproj2ApplicationTests {
+
+    //注入RedisTemplate
+    @Autowired
+    private RedisTemplate redisTemplate; // 泛型表示支持字符串键和对象值
+
+
+    @Test
+    void contextLoads() {
+        // 测试连接是否成功
+        redisTemplate.opsForValue().set("Redis1", "Hello Redis!");
+        String value = (String) redisTemplate.opsForValue().get("Redis1");
+        System.out.println("Redis1: " + value);
+    }
+
+}
+
+```
+
+---
+
+> 再使用连接池进行写入Redis数据时，实际上传入参数是Object类型。它内部会自动将Object类型转换为Redis支持的类型。但是内部会进行序列化操作，将Object类型转换为字节数组。
+>
+> 想要通过客户端访问时，实际上键值对要进行反序列化操作，将字节数组转换为Object类型。
+>
+> 类似于如此：**“Redis1: Hello Redis!”** 我们通过上示例进行写入，但是通过redis-cli查看时，发现键值对**是“Redis1: \xac\xed\x00\x05t\x00\x0cHello Redis!”。**
+
+#### 3.1.1 序列化设置
+
+1. 序列化器
+
+```java
+
+@Configuration
+public class RedisConfig {
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory); // 设置连接工厂
+        // 设置序列化工具，JSON序列化
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
+        template.setKeySerializer(new StringRedisSerializer()); // 设置键序列化器
+        template.setValueSerializer(serializer); // 设置值序列化器
+        template.setHashKeySerializer(new StringRedisSerializer()); // 设置哈希键序列化器
+        template.setHashValueSerializer(serializer); // 设置哈希值序列化器
+        template.afterPropertiesSet();
+        return template;
+    }
+}
+```
+
+- 这种方式序列化可以将Object类型转换为JSON字符串，然后存储到Redis中。
+- 反序列化时，会将JSON字符串转换为Object类型。
+- 结果类似于此：
+
+```bash
+get user:1
+"{\"@class\":\"com.hong.redisproj2.User\",\"id\":1,\"name\":\"\xe5\xbc\xa0\xe4\xb8\x89\",\"email\":\"zhangsan@example.com\"}"
+
+```
+
+2. 使用StringRedisSerializer 和 Objectmapper对对象进行JSON序列化 进行序列化设置
+
+- 测试代码
+
+```java
+package com.hong.redisproj2;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+@SpringBootTest
+class StringRedisTemplateTest {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Test
+    void testStringOperations() {
+        String key = "test:string";
+        String value = "Hello StringRedisTemplate!";
+
+        stringRedisTemplate.opsForValue().set(key, value);
+        String retrievedValue = stringRedisTemplate.opsForValue().get(key);
+
+        System.out.println("Key: " + key);
+        System.out.println("Value: " + retrievedValue);
+        System.out.println("Test passed: " + value.equals(retrievedValue));
+    }
+
+    @Test
+    void testObjectSerializationWithObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = new User(1L, "张三", "zhangsan@example.com", 25);
+
+        try {
+            String key = "test:user:" + user.getId();
+
+            String jsonValue = objectMapper.writeValueAsString(user);
+            System.out.println("Serialized JSON: " + jsonValue);
+
+            stringRedisTemplate.opsForValue().set(key, jsonValue);
+
+            String retrievedJson = stringRedisTemplate.opsForValue().get(key);
+            System.out.println("Retrieved JSON: " + retrievedJson);
+
+            User retrievedUser = objectMapper.readValue(retrievedJson, User.class);
+            System.out.println("Retrieved User: " + retrievedUser);
+
+            System.out.println("Test passed: " + user.equals(retrievedUser));
+
+        } catch (JsonProcessingException e) {
+            System.err.println("JSON processing error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testMultipleUsers() {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        User user1 = new User(1L, "张三", "zhangsan@example.com", 25);
+        User user2 = new User(2L, "李四", "lisi@example.com", 30);
+        User user3 = new User(3L, "王五", "wangwu@example.com", 28);
+
+        try {
+            String key1 = "test:user:" + user1.getId();
+            String key2 = "test:user:" + user2.getId();
+            String key3 = "test:user:" + user3.getId();
+
+            stringRedisTemplate.opsForValue().set(key1, objectMapper.writeValueAsString(user1));
+            stringRedisTemplate.opsForValue().set(key2, objectMapper.writeValueAsString(user2));
+            stringRedisTemplate.opsForValue().set(key3, objectMapper.writeValueAsString(user3));
+
+            User retrievedUser1 = objectMapper.readValue(stringRedisTemplate.opsForValue().get(key1), User.class);
+            User retrievedUser2 = objectMapper.readValue(stringRedisTemplate.opsForValue().get(key2), User.class);
+            User retrievedUser3 = objectMapper.readValue(stringRedisTemplate.opsForValue().get(key3), User.class);
+
+            System.out.println("Retrieved User 1: " + retrievedUser1);
+            System.out.println("Retrieved User 2: " + retrievedUser2);
+            System.out.println("Retrieved User 3: " + retrievedUser3);
+
+            System.out.println("All users stored and retrieved successfully!");
+
+        } catch (JsonProcessingException e) {
+            System.err.println("JSON processing error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testHashOperations() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = new User(1L, "赵六", "zhaoliu@example.com", 35);
+
+        try {
+            String hashKey = "test:user:hash:" + user.getId();
+
+            stringRedisTemplate.opsForHash().put(hashKey, "id", String.valueOf(user.getId()));
+            stringRedisTemplate.opsForHash().put(hashKey, "name", user.getName());
+            stringRedisTemplate.opsForHash().put(hashKey, "email", user.getEmail());
+            stringRedisTemplate.opsForHash().put(hashKey, "age", String.valueOf(user.getAge()));
+
+            String retrievedId = (String) stringRedisTemplate.opsForHash().get(hashKey, "id");
+            String retrievedName = (String) stringRedisTemplate.opsForHash().get(hashKey, "name");
+            String retrievedEmail = (String) stringRedisTemplate.opsForHash().get(hashKey, "email");
+            String retrievedAge = (String) stringRedisTemplate.opsForHash().get(hashKey, "age");
+
+            System.out.println("Hash operations test:");
+            System.out.println("ID: " + retrievedId);
+            System.out.println("Name: " + retrievedName);
+            System.out.println("Email: " + retrievedEmail);
+            System.out.println("Age: " + retrievedAge);
+
+            User reconstructedUser = new User(
+                    Long.parseLong(retrievedId),
+                    retrievedName,
+                    retrievedEmail,
+                    Integer.parseInt(retrievedAge)
+            );
+
+            System.out.println("Reconstructed User: " + reconstructedUser);
+
+        } catch (Exception e) {
+            System.err.println("Hash operations error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+
+- 测试类对象
+
+```java
+package com.hong.redisproj2;
+
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+    private Integer age;
+
+    public User() {
+    }
+
+    public User(Long id, String name, String email, Integer age) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", age=" + age +
+                '}';
+    }
+}
+
+
+- 序列化对象注册
+```java
+package com.hong.redisproj2;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+@Configuration
+public class RedisConfig {
+
+    @Bean  // 使用StringRedisSerializer对键进行序列化和反序列化
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.afterPropertiesSet();
+        return template;
+    }
+
+    @Bean
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.afterPropertiesSet();
+        return template;
+    }
+}
+
+
+```
+
+- 通过redis-cli查看时，键值对类似于此：
+
+```bash
+get "test:user:2"
+"{\"id\":2,\"name\":\"\xe6\x9d\x8e\xe5\x9b\x9b\",\"email\":\"lisi@example.com\",\"age\":30}"
+```
+
+## 4. 黑马点评部分
+
+### 4.1 Session 登录
+
+![](/assets/images/posts/redis-heima-course/1779763021308.webp)
+
+### 4.2 拦截器在登录校验时线程不安全问题
+
+- 问题：
+  - 拦截器是单例的：Spring 容器中默认一个拦截器 Bean 只有一个对象。
+  - 多个请求线程同时访问：每个请求都会进入同一个拦截器的 preHandle 方法。
+- 解决：使用threadLocal存储登录信息，避免线程不安全问题。
+  - 拦截器中添加threadLocal，用于存储登录信息。
+  - 拦截器中添加方法，用于获取登录信息。preHandleLocal.get() 在开始时获取登录信息，afterCompletionLocal.remove() 在结束时清除登录信息。
+
+---
+
+> // 拦截器并不归于容器管理，需要手动创建，因此它需要在 ApplicationRunner 中创建
+> // 同时，在使用其他如RedisTemplate等组件时，也需要在 内部或传入，无法进行自动注入
+
+---
+
+![](/assets/images/posts/redis-heima-course/1779780053605.webp)
+
+> Session 在针对多台Tomcat时，是相互独立的。每个Tomcat实例都有自己的Session管理器，不会共享Session。
+>
+> 解决这种问题就是通过Redis来存储Session信息。
+
+### 4.3 Redis 进行登录校验管理
+
+![](/assets/images/posts/redis-heima-course/1779780538903.webp)
+
+- JWT（JSON Web Token）方式，通过后端生成JWT，作为唯一的标识符（区分每个用户，同时标识Session）。
+  ![](/assets/images/posts/redis-heima-course/1779780624783.webp)
+
+![](/assets/images/posts/redis-heima-course/1779785801069.webp)
+
+### 4.4 Redis 进行商户缓存
+
+#### 4.4.1 缓存介绍
+
+- 缓存就是数据交换的中间层，用于临时存储数据，提高数据访问速度。
+
+1. 缓存的作用：
+
+   - 提高数据访问速度：通过缓存热门数据，减少数据库访问次数。
+   - 减少数据库压力：缓存可以缓存数据库查询结果，避免重复查询。
+   - 提供实时数据：缓存可以提供实时数据，避免依赖数据库。
+2. 缓存的成本：
+
+   - 存储成本：缓存需要占用内存空间，增加服务器成本。
+   - 计算成本：缓存需要占用CPU资源，增加服务器成本。
+   - 数据一致性问题：缓存数据和数据库数据不一致，需要通过缓存失效策略来解决。
+
+![](/assets/images/posts/redis-heima-course/1779846759124.webp)
+
+#### 4.4.3 缓存更新策略
+
+- JMeter 工具：用于测试缓存更新策略的性能。
+
+![](/assets/images/posts/redis-heima-course/1779851152947.webp)
+
+![](/assets/images/posts/redis-heima-course/1779851431910.webp)
+![](/assets/images/posts/redis-heima-course/1779851614179.webp)
+![](/assets/images/posts/redis-heima-course/1779852005519.webp)
+
+1. 缓存穿透
+
+- 缓存穿透是指当前请求的key不存在缓存中，也不存在数据库中，导致数据库压力增加。
+  ![](/assets/images/posts/redis-heima-course/1779862593042.webp)
+- 解决方案：
+  - 缓存空对象，避免数据库压力增加。 这种方式会增加额外内存消耗，可能造成短期的不一致性。
+  - 布隆过滤器，避免缓存穿透。
+  - 并不仅限于此，也可以通过其他方式来避免缓存穿透。
+  - 数据校验，用户权限校验。
+
+---
+
+> 缓存穿透的一个解决代码示例：通过缓存空对象，避免数据库压力增加。
+
+```java
+
+    @Override
+    public Result queryById(Long id) {
+        // 1. 从Redis缓存中查询
+        String key = CACHE_SHOP_KEY + id;
+        String shopJson = stringRedisTemplate.opsForValue().get(key);
+        // 2. 判断缓存中是否有数据 StrUtil.isNotBlank() 方法判断字符串是否为空，不包含空格等
+        if (StrUtil.isNotBlank(shopJson)) {
+            // 存在数据，直接返回
+            Shop shop = JSONUtil.toBean(shopJson, Shop.class);
+            return Result.ok(shop);
+        }
+        // 如果缓存中有数据，但是是空字符串，说明店铺不存在，直接返回失败
+        if (shopJson != null) {
+            return Result.fail("店铺不存在");
+        }
+        // 4. 如果没有数据，从数据库中查询
+        Shop shop = getById(id);
+
+        if (shop == null) {// 店铺不存在
+            // 创建空对象，避免缓存穿透问题
+            stringRedisTemplate.opsForValue().set(key, "",CACHE_NULL_TTL, TimeUnit.MINUTES);
+            return Result.fail("店铺不存在");
+        }
+        // 6. 如果数据库中也有数据，写入缓存，返回数据
+        stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(shop), CACHE_SHOP_TTL, TimeUnit.MINUTES);
+        return Result.ok(shop);
+    }
+
+```
+
+1. 缓存雪崩
+
+- 缓存雪崩是指在同一时间，缓存中大量的的数据都失效期，导致数据库压力增加。
+  ![](/assets/images/posts/redis-heima-course/1779864118801.webp)
+
+3. 缓存击穿（热点Key问题）
+
+- 缓存击穿问题叫热点key问题。一个被高并发访问并且缓存重建业务复杂的key突然失效，导致数据库压力增加。
+
+![](/assets/images/posts/redis-heima-course/1779864334406.webp)
+
+![](/assets/images/posts/redis-heima-course/1779864627348.webp)
+
+![](/assets/images/posts/redis-heima-course/1779864639783.webp)
+
+- 互斥锁在Redis中可以使用setnx实现，因为setnx命令在key不存在时，才会设置成功，其他情况都会返回失败。
+- 互斥锁的实现原理是：
+  - 当线程A请求获取互斥锁时，会使用setnx命令设置互斥锁。
+  - 如果互斥锁不存在，会设置互斥锁，返回成功。
+  - 如果互斥锁存在，会返回失败。
+- 
+
+![](/assets/images/posts/redis-heima-course/1779865012520.webp)
+
+- 热点Key互斥锁解决代码示例：
+
+```java
+
+    // 使用互斥锁来解决热点Key不存在问题
+    public Shop queryWithMutex(Long id){
+        // 1. 从Redis缓存中查询
+        String key = CACHE_SHOP_KEY + id;
+        String shopJson = stringRedisTemplate.opsForValue().get(key);
+        // 2. 判断缓存中是否有数据
+        if (StrUtil.isNotBlank(shopJson)) {
+            // 存在数据，直接返回
+            Shop shop = JSONUtil.toBean(shopJson, Shop.class);
+            return shop;
+        }
+        // 如果缓存中有数据，但是是空字符串，说明店铺不存在，直接返回失败
+        if (shopJson != null) {
+            return null;
+        }
+        Shop shop = null;
+        String lockKey = LOCK_SHOP_KEY + id;
+        try {
+            // 3. 尝试获取互斥锁
+            boolean isLock = tryLock(lockKey, LOCK_SHOP_TTL, TimeUnit.SECONDS);
+            if (!isLock) {
+                // 获取互斥锁失败，休眠一段时间后重试
+                Thread.sleep(50);
+                return queryWithMutex(id);
+            }
+            // 4. 如果没有数据，从数据库中查询
+            shop = getById(id);
+            if (shop == null) {// 店铺不存在
+                // 创建空对象，避免缓存穿透问题
+                stringRedisTemplate.opsForValue().set(key, "",CACHE_NULL_TTL, TimeUnit.MINUTES);
+                return null;
+            }
+            // 6. 如果数据库中也有数据，写入缓存，返回数据
+            stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(shop), CACHE_SHOP_TTL, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }finally {
+            // 7. 释放互斥锁
+            unlock(lockKey);
+        }
+        return shop;
+    }
+
+
+```
+
+- 逻辑过期解决热点Key问题：
+  ![](/assets/images/posts/redis-heima-course/1779867956048.webp)
+
+```java
+
+   @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    // 逻辑过期缓存时，调用线程进行缓存重建 通过线程池来进行，避免频繁线程销毁申请问题
+    private final ExecutorService CACHE_REBUILD_EXECUTOR = Executors.newFixedThreadPool(10);
+
+
+
+    @Override
+    public Result queryById(Long id) {
+        Shop shop = queryWithLogicExpire(id);
+        if (shop == null) {
+            return Result.fail("店铺不存在");
+        }
+        return Result.ok(shop);
+    }
+
+
+    // 使用逻辑过期时间来缓解缓存击穿，热点key问题 (这个代码实际在访问时，有bug，如果缓存中没有事先加载缓存数据，启动时，会导致无法查询到数据情况)
+    public Shop queryWithLogicExpire(Long id){
+        // 1. 从Redis缓存中查询
+        String key = CACHE_SHOP_KEY + id;
+        String redisDataJson = stringRedisTemplate.opsForValue().get(key);
+        // 2. 判断缓存中是否有数据（逻辑过期需要启动前，将数据库数据先缓存到Redis缓存中才行）
+        if (StrUtil.isBlank(redisDataJson)) {
+            return null;// 缓存中没有数据，直接返回失败
+        }
+        // 3. 将RedisData转换为Shop
+        RedisData redisData = JSONUtil.toBean(redisDataJson, RedisData.class);
+        LocalDateTime expireTime = redisData.getExpireTime();
+        Shop shop = JSONUtil.toBean((JSONObject) redisData.getData(), Shop.class);
+        // 4. 判断缓存是否过期 未过期，则直接返回结果即可
+        if (expireTime.isAfter(LocalDateTime.now())) {
+            return shop;
+        }
+
+        // 5. 如果过期，需要缓存重建，使用互斥锁来进行重建
+        String lockKey = LOCK_SHOP_KEY + id;
+        boolean islock = tryLock(lockKey, LOCK_SHOP_TTL, TimeUnit.SECONDS);
+        if (islock) {
+            // 如果获取成功，申请一个线程从线程池，用另一个线程进行更新缓存
+            CACHE_REBUILD_EXECUTOR.submit(() -> {
+                try {
+                    saveShop2Redis(id, CACHE_SHOP_TTL);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    // 8. 释放互斥锁
+                    unlock(lockKey);
+                }
+            });
+        }
+        // 未获得锁的线程，直接使用旧缓存数据
+        return shop;
+    }
+    // 将Shop+逻辑过期时间写入缓存
+    public void saveShop2Redis(Long id , Long expireTime){
+        // 因为缓存中的数据，实际上最开始被添加都是从数据库中查询的，
+        // 只要保证查询数据在添加时，保存缓存格式是RedisData，包含过期时间和数据就行
+        Shop shop = getById(id);
+        // 封装RedisData
+        RedisData redisData = new RedisData();
+        redisData.setExpireTime(LocalDateTime.now().plusSeconds(expireTime));
+        redisData.setData(shop);
+        // 写入redis缓存 逻辑过期只在过期更新数据，在缓存中实际上一直存在
+        stringRedisTemplate.opsForValue().set(CACHE_SHOP_KEY + id,
+                JSONUtil.toJsonStr(redisData));
+    }
+```
+
+#### 4.5 Redis缓存工具封装
+
+1. java 缓存工具类封装
+
+```java
+
+package com.hmdp.utils;
+
+import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.hmdp.entity.Shop;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
+import static com.hmdp.utils.RedisConstants.*;
+import static com.hmdp.utils.RedisConstants.CACHE_SHOP_TTL;
+
+
+// 缓存工具类的作用，就是包装，将对于数据库访问的形式都进行封装，方便调用
+// 同时针对缓存穿透问题和热点key问题，进行不同的缓存机制。
+// 好处是 上级代码在调用时，只需要调用缓存工具类的方法，不需要关注缓存的实现细节。
+
+@Component
+@Slf4j
+public class CacheClient {
+
+
+    private  final StringRedisTemplate stringRedisTemplate;
+
+    // 逻辑过期缓存时，调用线程进行缓存重建 通过线程池来进行，避免频繁线程销毁申请问题
+    private final ExecutorService CACHE_REBUILD_EXECUTOR = Executors.newFixedThreadPool(10);
+
+    public CacheClient(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
+
+    // 将对象存储进入缓存
+    public void setCache(String key, Object value, long expireTime, TimeUnit timeUnit) {
+        stringRedisTemplate.opsForValue().set(key,
+                JSONUtil.toJsonStr(value), expireTime, timeUnit);
+    }
+
+
+    // 将逻辑过期时间+对象数据(RedisData)存储进入缓存
+    public void setCacheWithLogicExpire(String key, Object value, long expireTime, TimeUnit timeUnit) {
+        RedisData redisData = new RedisData();
+        redisData.setExpireTime(LocalDateTime.now().plusSeconds(timeUnit.toSeconds(expireTime)));
+        redisData.setData(value);
+        stringRedisTemplate.opsForValue().set(key,
+                JSONUtil.toJsonStr(redisData));
+    }
+
+
+    // 使用空缓存解决缓存穿透问题的取数据方法
+    public <R, ID> R getWithPassThrough(String keyPrefix, ID id, Class<R> clazz,
+                                          Function<ID,R> dbQuery, long expireTime,
+                                          TimeUnit timeUnit) {
+
+        String key = keyPrefix + id;
+        String json = stringRedisTemplate.opsForValue().get(key);
+        // 1. 判断缓存中是否有数据且不是空缓存
+        if (StrUtil.isNotBlank(json)) {
+            return JSONUtil.toBean(json, clazz);
+        }
+        // 2.有数据但是是空缓存，说明数据库没有这数据，不要进行穿透访问后续
+        if (json != null) {
+            return null;
+        }
+
+        // 3. 缓存中没有数据,要查数据库确定是否有这数据
+        R data = dbQuery.apply(id);
+        if (data == null) { // 数据库也没有这数据，删除缓存中的空缓存
+            this.setCache(key, "", expireTime, timeUnit);
+            return null;
+        }
+        // 4. 数据库有这数据，将数据存储进入缓存
+        this.setCache(key, data, expireTime, timeUnit);
+
+        return data;
+    }
+
+
+    // 使用逻辑过期时间来缓解缓存击穿，热点key问题,需要启动前加载数据到缓存中
+    public <R, ID> R getLogicExpire(String keyPrefix, ID id, Class<R> clazz,
+                                        String lockKeyPrefix,Long lockExpireTime, TimeUnit lockTimeUnit,
+                                        Function<ID,R> dbQuery, long expireTime, TimeUnit timeUnit){
+        // 1. 从Redis缓存中查询
+        String key = keyPrefix + id;
+        String redisDataJson = stringRedisTemplate.opsForValue().get(key);
+        // 2. 判断缓存中是否有数据
+        if (StrUtil.isBlank(redisDataJson)) {
+            return null;// 缓存中没有数据，直接返回失败
+        }
+        // 3. 将RedisData转换为Shop
+        RedisData redisData = JSONUtil.toBean(redisDataJson, RedisData.class); // 这一步将RedisDataJson转换为RedisData对象
+        LocalDateTime jsonExpireTime = redisData.getExpireTime(); // 这一步获取RedisData对象中的过期时间
+        R result = JSONUtil.toBean((JSONObject) redisData.getData(), clazz); // 这一步将RedisData对象中的数据转换为Shop对象 JSONUtils.toBean()是将JSONObject转换为Shop对象的工具方法
+        // 4. 判断缓存是否过期 未过期，则直接返回结果即可
+        if (jsonExpireTime.isAfter(LocalDateTime.now())) {
+//            System.out.println("缓存未过期");
+            return result;
+        }
+
+        // 5. 如果过期，需要缓存重建，使用互斥锁来进行重建
+        String lockKey = lockKeyPrefix + id;
+        boolean islock = tryLock(lockKey, lockExpireTime, lockTimeUnit);
+        if (islock) {
+//            System.out.println("获取锁成功");
+            // 如果获取成功，申请一个线程从线程池，用另一个线程进行更新缓存
+            CACHE_REBUILD_EXECUTOR.submit(() -> {
+                try {
+                    this.setCacheWithLogicExpire(key, dbQuery.apply(id), expireTime, timeUnit);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    // 8. 释放互斥锁
+                    unlock(lockKey);
+                }
+            });
+        }
+        // 未获得锁的线程，直接使用旧缓存数据
+        return result;
+    }
+
+
+    private boolean tryLock(String key,Long lockTtl,TimeUnit timeUnit){
+        Boolean success = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", lockTtl, timeUnit);
+        return BooleanUtil.isTrue(success);
+    }
+
+    private void unlock(String key){
+        stringRedisTemplate.delete(key);
+    }
+}
+
+
+```
+
+2. 缓存工具类调用
+
+```java
+@Service
+public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IShopService {
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+//    // 逻辑过期缓存时，调用线程进行缓存重建 通过线程池来进行，避免频繁线程销毁申请问题
+//    private final ExecutorService CACHE_REBUILD_EXECUTOR = Executors.newFixedThreadPool(10);
+
+    @Resource
+    private CacheClient cacheClient;
+
+
+    @Override
+    public Result queryById(Long id) {
+//        Shop shop = cacheClient.getWithPassThrough(CACHE_SHOP_KEY, id, Shop.class,
+//                this::getById, CACHE_SHOP_TTL, TimeUnit.MINUTES);
+        Shop shop = cacheClient.getLogicExpire(CACHE_SHOP_KEY, id, Shop.class,
+                LOCK_SHOP_KEY, LOCK_SHOP_TTL, TimeUnit.SECONDS,
+                this::getById, CACHE_SHOP_TTL, TimeUnit.MINUTES);
+        if (shop == null) {
+            return Result.fail("店铺不存在");
+        }
+        return Result.ok(shop);
+    }
+
+}
+
+```
+
+### 4.5 优惠卷秒杀部分Redis技术
+
+#### 4.5.1 全局ID介绍
+
+- 全局ID：用于生成唯一的全局ID，在分布式系统中，保证ID与任一个节点的ID不冲突。
+  ![](/assets/images/posts/redis-heima-course/1779935361748.webp)
+
+1. 全局ID生成器
+
+- 全局ID生成器：用于生成唯一的全局ID，在分布式系统中，保证ID与任一个节点的ID不冲突。
+- 全局ID生成器特点： 唯一性、高可用、高性能、递增性、安全性
+
+> 使用Redis 的自增效果（Redis 在系统中并发访问，唯一存在保证）。通过Redis自增+拼接信息，生成唯一的全局ID。
+
+> 全局ID生成器策略： UUID 、 Redis自增 、 snowflake算法
+
+```java
+
+package com.hmdp.utils;
+
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
+@Component
+public class RedisIdWorker {
+
+    private  static final long START_TIMESTAMP = 1694502400000L;
+    private  static final long TIMESTAMP_BIT = 32;
+
+    private StringRedisTemplate stringRedisTemplate;
+
+    public RedisIdWorker(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
+
+    public long nextId(String keyPrefix) {
+
+        // 1. 生成时间戳
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Long nowSecond = localDateTime.toEpochSecond(ZoneOffset.UTC);
+        Long timestamp = nowSecond - START_TIMESTAMP;
+
+        // 2. 生成序列号
+        String now = localDateTime.format(DateTimeFormatter.ofPattern("yyyy:MM:dd"));
+        Long sequence = stringRedisTemplate.opsForValue().increment("ICR:"+keyPrefix+":"+now);
+
+        // 3. 生成全局ID
+        Long id = timestamp << TIMESTAMP_BIT | sequence;
+
+        return id;
+
+    }
+}
+
+```
+
+### 4.5.2 秒杀券下单
+
+- 业务逻辑：
+- ![](/assets/images/posts/redis-heima-course/1779949717227.webp)
+- 超卖问题：
+- ![](/assets/images/posts/redis-heima-course/1779950977524.webp)
+- ![](/assets/images/posts/redis-heima-course/1779953418719.webp)
+- 乐观锁策略：
+- ![](/assets/images/posts/redis-heima-course/1779953705739.webp)
+- ![](/assets/images/posts/redis-heima-course/1779953758788.webp)
+- 乐观锁能够保证业务逻辑的 一致性，避免超卖问题。但是会引发请求大量失败的可能性，导致系统性能下降。
+- 但是可以设置乐观锁的条件，改善性能。
+- **如下代码，使用剩余库存是否大于0 来判断是否超卖。如果剩余库存为0，说明超卖，直接返回失败。**
+
+```java
+package com.hmdp.service.impl;
+
+import com.hmdp.dto.Result;
+import com.hmdp.entity.SeckillVoucher;
+import com.hmdp.entity.VoucherOrder;
+import com.hmdp.mapper.SeckillVoucherMapper;
+import com.hmdp.mapper.VoucherOrderMapper;
+import com.hmdp.service.ISeckillVoucherService;
+import com.hmdp.service.IVoucherOrderService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hmdp.utils.RedisIdWorker;
+import com.hmdp.utils.UserHolder;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
+
+@Service
+public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, VoucherOrder> implements IVoucherOrderService {
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedisIdWorker redisIdWorker; // 用于生成订单id
+
+    // 注入秒杀优惠卷Mapper
+    @Resource
+    private ISeckillVoucherService seckillVoucherService;
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result seckillVoucher(Long voucherId) {
+        // 1 .查询秒杀优惠卷
+        SeckillVoucher seckillvoucher = seckillVoucherService.getById(voucherId);
+        if (seckillvoucher == null) {
+            return Result.fail("优惠卷不存在");
+        }
+        Integer stock = seckillvoucher.getStock();
+        LocalDateTime startTime = seckillvoucher.getBeginTime();
+        LocalDateTime endTime = seckillvoucher.getEndTime();
+        LocalDateTime now = LocalDateTime.now();
+        // 2. 判断秒杀是否开始
+        if (now.isBefore(startTime)) {
+            return Result.fail("秒杀优惠卷未开始");
+        }
+        // 3. 判断秒杀是否已经结束
+        if (now.isAfter(endTime)) {
+            return Result.fail("秒杀优惠卷已结束");
+        }
+        // 4. 判断优惠卷是否已经售罄
+        if (stock <= 0) {
+            return Result.fail("秒杀优惠卷已售罄");
+        }
+
+        // 创建和扣减是一个原子操作，不能拆开
+        // 5. 扣减优惠卷库存
+        seckillvoucher.setStock(stock - 1);
+        boolean result = seckillVoucherService.update().
+                setSql("stock = stock - 1").eq("voucher_id", voucherId).gt("stock", 0)
+                .update();
+        if (!result) {
+            return Result.fail("秒杀优惠卷已售罄");
+        }
+        // 6. 创建订单
+        // 获取订单ID 、 用户ID 、 优惠卷ID
+
+        Long orderId = redisIdWorker.nextId("order");
+//        System.out.println("订单id：" + orderId);
+        // 用户ID 在拦截器中进行获取
+        Long userID = UserHolder.getUser().getId();
+
+        // 插入订单数据入数据库
+        VoucherOrder voucherOrder = new VoucherOrder();
+        voucherOrder.setId(orderId);
+        voucherOrder.setUserId(userID);
+        voucherOrder.setVoucherId(voucherId);
+        voucherOrder.setCreateTime(now);
+
+        save(voucherOrder);
+        // 7. 返回订单id
+
+        return Result.ok(orderId);
+    }
+}
+
+
+
+```
+
+- 秒杀券对于每个用户只能下单一次的设计参考：
+  [秒杀券一人一单下单设计介绍](/posts/redis-seckill-lock/)
+  ![](/assets/images/posts/redis-heima-course/1780019888863.webp)
+
+> 导致上锁失效原因是：JVM锁是通过内部锁监视器来维护的一个常量池
+> 而对于多台JVM，每个JVM都有自己的锁监视器，所以会导致锁失效。
+> ![](/assets/images/posts/redis-heima-course/1780020566577.webp)
+
+1. (同一个用户对同一批数据发起多个请求引发问题)分布式锁：
+
+- 分布式锁是指在多个节点之间协调的锁，用于确保在多个节点之间只能有一个线程或进程能够访问共享资源。
+- 分布式锁的实现方式有很多种，比如使用Redis的SETNX命令、使用ZookeeperKeeper、使用MySQL的行锁等。
+
+```bash
+SET lock threadID EX  10 NX   // 设置锁，过期时间为10秒，如果锁不存在则设置成功
+```
+
+- 存在问题：锁过期时间太短或任务阻塞时间太长，会导致锁失效。
+- ![锁过期时间太短或任务阻塞时间太长导致锁失效](/assets/images/posts/redis-heima-course/1780023111667.webp)
+- 解决方案：续命机制，在任务执行过程中，定时续命，延长锁的过期时间。**锁的释放设置标识判断，是否为当前线程的锁。**
+- ![锁释放时受到阻塞导致异常（需要保证判断锁和释放锁为一个原子操作）](/assets/images/posts/redis-heima-course/1780023904004.webp)
+
+---
+
+> Redis提供Lua脚本(它在Redis服务器端执行的，确保了原子性)，用于实现分布式锁的原子操作。
+
+```lua
+-- 获取锁中key的值(Redis中存储的锁（键值对）)
+local key = KEYS[1]
+-- 当前线程标识
+local threadID = ARGV[1]
+
+--  获取锁中key的值
+local id = redis.call("GET", key)
+
+-- 判断锁中key的值与当前线程标识是否相等
+if id == threadID then
+    -- 释放锁
+    redis.call("DEL", key)
+    return 1
+else
+    -- 锁被其他线程占用，无法释放
+    return 0
+end
+
+```
+
+2. Setnx分布式锁的问题
+   ![](/assets/images/posts/redis-heima-course/1780284104701.webp)
+
+---
+
+> 可重入锁是指在同一个线程或进程中，可以重复获取同一个锁，而不会导致死锁。
+>
+> 假设有一个线程A，它获取了锁L1，然后在执行过程中，需要获取锁L1，而锁L1已经被线程A获取了，所以会阻塞。
+> 但是如果锁L1是可重入锁，那么线程A可以再次获取锁L1，而不会阻塞。
+
+> Redission提供可重入锁的实现，用于解决以上问题。
+
+##### Redisission可重入锁原理
+
+- ReentrantRedisLock（解决可重入锁问题的实现）：redis键值对中不仅存储锁的标识，还存储锁的获取次数。
+- 再次获取锁时，锁的获取次数会增加。释放锁时，锁的获取次数会减少。
+- 当锁的获取次数为0时，锁才会被释放。
+  ![Redisission可重入锁原理](/assets/images/posts/redis-heima-course/1780296355559.webp)
+- **同时保证原子性，确保在获取锁和释放锁时，不会受到其他线程的干扰。使用Lua脚本实现。**
+
+---
+
+- 获取锁Lua脚本：
+
+```lua
+-- 获取锁中key的值(Redis中存储的锁（键值对）)
+local key = KEYS[1]
+-- 当前线程标识
+local threadID = ARGV[1]
+
+local releaseTime = ARGV[2]
+
+-- 判断是否存在
+if redis.call("EXISTS", key) == 0 then
+    -- 锁不存在，获取锁
+    redis.call("HSET", key, threadID, 1)
+    redis.call("EXPIRE", key, releaseTime) -- 锁锁过期时间
+    return 1
+end
+
+-- 锁存在，判断是否是当前线程获取锁
+if redis.call("HEXISTS", key, threadID) == 1 then
+    -- 是当前线程获取锁，重入锁
+    redis.call("HINCRBY", key, threadID, 1)
+    redis.call("EXPIRE", key, releaseTime) -- 重置锁锁过期时间
+    return 1
+end
+return 0  -- 锁存在且不是当前线程获取锁，获取锁失败
+
+```
+
+- 释放锁Lua脚本：
+
+```lua
+-- 获取锁中key的值(Redis中存储的锁（键值对）)
+local key = KEYS[1]
+-- 当前线程标识
+local threadID = ARGV[1]
+-- 锁锁过期时间
+local releaseTime = ARGV[2]
+
+-- 判断当前锁是否是当前线程获取锁
+if redis.call("HEXISTS", key, threadID) == 0 then
+    -- 锁不存在或不是当前线程获取锁，无法释放
+    return nil
+end
+
+local count = redis.call("HINCRBY", key, threadID, -1)
+if count > 0 then
+    -- 锁的获取次数大于0，不释放锁 重置锁锁过期时间
+    redis.call("EXPIRE", key, releaseTime)
+    return nil
+else
+    -- 锁的获取次数为0，释放锁
+    redis.call("HDEL", key, threadID) 
+    return nil
+end
+return nil
+
+```
+
+##### Redisission 重试机制
+
+![Redisission 重试机制和看门狗机制](/assets/images/posts/redis-heima-course/1780298596466.webp)
+
+- 消息订阅、信号量实现重试机制、最大重试时间
+- 当客户端获取锁时，如果无法获取到，会监听锁的消息，当锁被释放时，并且在最大重试时间内，会重试获取锁。
+
+##### Redisission 锁过期的安全问题
+
+- 当任务获取锁成功，但是由于任务阻塞未完成，超时释放锁，会导致锁失效。
+- 解决方案：续命机制，在任务执行过程中，定时续命，延长锁的过期时间。**锁的释放设置标识判断，是否为当前线程的锁。**
+- 看门狗机制：在任务执行过程中，定时检查锁是否过期，如果过期，会自动释放锁。
+
+##### Redisission 主从一致性问题解决
+
+- 主从一致性问题：Redis主机在写入数据时发生异常宕机，从机会继续写入数据，导致主从数据不一致。
+  ![](/assets/images/posts/redis-heima-course/1780299092324.webp)
+- 解决方案： MultiLock方式，创建锁需要在所有节点上创建锁，确保锁的创建在所有节点上都生效。如果其中有一个节点创建锁失败，会创建失败。
+
+### 4.5.3 秒杀券的异步操作（消息队列）
+
+![](/assets/images/posts/redis-heima-course/1780301583577.webp)
+![](/assets/images/posts/redis-heima-course/1780301862185.webp)
+
+- Redis中存储秒杀券的库存数量。
+- Redis中存储秒杀券的订单队列（Set结构保证一人一单）。在添加进入队列这个操作同样需要原子操作，确保队列添加和修改库存的操作是原子的。
+
+1. Redis中记录秒杀券的库存数量 和存储秒杀券的订单队列（订单中用户ID和秒杀券ID）Set结构保证一人一单、原子操作
+
+```lua
+
+---
+--- Generated by EmmyLua(https://github.com/EmmyLua)
+--- Created by 123.
+--- DateTime: 2026/6/1 17:02
+---
+
+--  获取优惠券ID
+local voucherID = ARGV[1]
+-- 用户ID
+local userID = ARGV[2]
+
+-- 操作数据
+-- 库存Key
+local stockKey = 'seckill:stock:' .. voucherID
+-- 订单Key
+local orderKey = 'seckill:order:' .. voucherID
+
+-- 脚本业务
+-- 判断库存是否充足，不足则返回失败
+local stock = tonumber(redis.call('GET', stockKey))
+if stock == nil or stock <= 0 then
+
+    return 1
+end
+-- 库存充足，判断用户是否已经下单（限制一人一单）
+if(redis.call('sismember', orderKey, userID) == 1) then
+--     标识用户已经下过单
+
+    return 2
+end
+
+-- 用户没有下过单，且库存充足，需要减库存，添加订单
+redis.call('incrby', stockKey, -1)
+redis.call('sadd', orderKey, userID)
+return 0
+
+
+```
+
+2. 秒杀券的异步操作（消息队列）：
+
+- 线程池：用于处理秒杀订单的异步操作。
+- 消息队列：用于存储秒杀订单的异步操作。
+- 线程任务设置：用于处理秒杀订单的异步操作。
+
+```java
+package com.hmdp.service.impl;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import com.hmdp.dto.Result;
+import com.hmdp.entity.VoucherOrder;
+import com.hmdp.mapper.VoucherOrderMapper;
+import com.hmdp.service.ISeckillVoucherService;
+import com.hmdp.service.IVoucherOrderService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hmdp.utils.RedisIdWorker;
+import com.hmdp.utils.UserHolder;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.aop.framework.AopContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+/**
+ * <p>
+ *  服务实现类
+ * </p>
+ *
+ * @author 虎哥
+ * @since 2021-12-22
+ */
+@Slf4j
+@Service
+public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, VoucherOrder> implements IVoucherOrderService {
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedisIdWorker redisIdWorker; // 用于生成订单id
+
+    // 注入秒杀优惠卷Mapper
+    @Resource
+    private ISeckillVoucherService seckillVoucherService;
+
+    // 注入RedissonClient
+    @Resource
+    private RedissonClient redissonClient;
+
+    private static final DefaultRedisScript<Long> SECKILL_SCRIPT;
+    static {
+        SECKILL_SCRIPT = new DefaultRedisScript<>();
+        SECKILL_SCRIPT.setLocation(new ClassPathResource("seckill.lua"));
+        SECKILL_SCRIPT.setResultType(Long.class);
+    }
+    //    阻塞队列
+    private BlockingQueue<VoucherOrder> voucherOrderBlockingQueue = new ArrayBlockingQueue<VoucherOrder>(1024*1024);
+    // 创建线程池，线程用于完成队列中的任务
+    private static final ExecutorService SECKILL_EXECUTOR_SERVICE = Executors.newFixedThreadPool(10);
+
+    @PostConstruct
+    private void init() { // 将订单处理线程提交到线程池中
+        SECKILL_EXECUTOR_SERVICE.submit(new VocherOrderHandler());
+    }
+    // 订单处理线程,用于处理队列中的订单
+    private class VocherOrderHandler implements Runnable {
+        @Override
+        public void run() {
+            while (true) {
+                try{
+                    VoucherOrder voucherOrder = voucherOrderBlockingQueue.take();
+                    handlerVoucherOrder(voucherOrder);
+                }catch (InterruptedException e){
+                    log.error("订单处理线程被中断", e);
+                }
+            }
+
+        }
+    }
+    // 获取当前类的代理对象，用于子线程在创建订单时调用createOrder方法创建订单
+    private IVoucherOrderService proxy;
+
+    // 处理订单，由线程池中子线程创建订单
+    private void handlerVoucherOrder(VoucherOrder voucherOrder) {
+        // 1. 获取用户ID
+        Long userID = voucherOrder.getUserId();
+        // 2. 创建锁对象
+        RLock lock = redissonClient.getLock("lock:order:" + userID);
+        // 获取锁
+        boolean locked = lock.tryLock();
+        if (!locked) {
+            log.error("用户{"+userID+"}下单失败，获取锁失败");
+            return;
+        }
+        // 3. 使用代理对象创建订单
+        try{
+            proxy.createOrder(voucherOrder);
+        }catch (Throwable e){
+            log.error("用户{"+userID+"}下单失败，创建订单失败", e);
+
+        }finally {
+        // 4. 释放锁
+        lock.unlock();
+               }
+    }
+
+    @Override
+    public Result seckillVoucher(Long voucherId) {
+        Long userID = UserHolder.getUser().getId();
+        // 1. 执行lua脚本，看返回情况 0表示有资格
+        Long result = stringRedisTemplate.execute(SECKILL_SCRIPT,
+                Collections.emptyList(),
+                voucherId.toString(),
+                userID.toString());
+        // 2. 判断结果是否为0
+        int r = result.intValue();
+        if (r == 1) {
+            return Result.fail("库存不足");
+        }
+        if (r == 2) {
+            return Result.fail("您已下单过");
+        }
+
+        // 3. 创建订单 并将订单放入阻塞队列中去
+        Long orderID = redisIdWorker.nextId("order");
+        VoucherOrder voucherOrder = new VoucherOrder();
+        voucherOrder.setId(orderID);
+        voucherOrder.setUserId(userID);
+        voucherOrder.setVoucherId(voucherId);
+        voucherOrderBlockingQueue.add(voucherOrder);
+
+        proxy = (IVoucherOrderService) AopContext.currentProxy();
+//
+        return Result.ok(orderID);
+    }
+
+    @Transactional
+    public void createOrder(VoucherOrder voucherOrder) {
+        // 新增限制一人一单的判断
+        Long userID = voucherOrder.getUserId();
+        Long voucherId = voucherOrder.getVoucherId();
+
+        int count = query().eq("user_id", userID).eq("voucher_id", voucherId).count();
+        if (count > 0) {
+           log.error("用户{"+userID+"}已购买过该优惠卷");
+           return;
+        }
+
+
+        // 创建和扣减是一个原子操作，不能拆开
+        // 5. 扣减优惠卷库存
+        boolean result = seckillVoucherService.update().
+                setSql("stock = stock - 1").eq("voucher_id", voucherId).gt("stock", 0)
+                .update();
+        if (!result) {
+           log.error("用户{"+userID+"}下单失败，优惠卷已售罄");
+           return;
+        }
+        // 6. 创建订单
+        // 获取订单ID 、 用户ID 、 优惠卷ID
+
+        Long orderId = redisIdWorker.nextId("order");
+        // System.out.println("订单id：" + orderId);
+        // 用户ID 在拦截器中进行获取
+
+        save(voucherOrder);
+
+
+    }
+
+}
+
+
+```
+
+[Redis黑马点评：秒杀券异步操作：理解消息队列与Lua脚本的结合](/posts/redis-async-seckill/)
+
+### 4.6 博客点赞功能
+
+- 博客点赞功能：用户可以对博客进行点赞，点赞后博客的点赞数会增加。再次点赞会减少点赞数。
+- 点赞列表：用户可以查看自己点赞的博客列表，按照点赞时间排序。
+- 实现分析：
+  - 1. Redis使用Sorted Set数据结构实现博客点赞功能。
+  - 2. 点赞列表：用户可以查看自己点赞的博客列表，按照点赞时间排序。
+  - 3. Redis缓存：用户点赞后，需要更新Redis缓存中的点赞数。用户点赞列表需要从Redis缓存中获取。
+
+### 4.7 关注功能与推荐功能
+
+- 关注功能：用户可以关注其他用户，关注后用户可以查看其他用户的博客。
+- 关注内容推送：用户关注的用户发布博客后，用户会收到通知。除此之外，用户还可以查看自己关注的用户的博客。
+- ![](/assets/images/posts/redis-heima-course/1782457786545.webp)
+- ![](/assets/images/posts/redis-heima-course/1782458079995.webp)
+- 关注推送，推送具体可采用Redis的Sorted Set数据结构存储接受或者发送的博客。
+- 但是接收方再从Sorted Set中获取博客时，需要根据博客的发布时间进行排序同时根据时间进行分页。分页注意设计**滚动分页**。
+
+### 4.8 附近商铺
+
+#### GEO 数据结构
+
+![](/assets/images/posts/redis-heima-course/1785486299711.webp)
+
+### 4.9 签到功能
+
+#### BitMap 数据结构
+
+![](/assets/images/posts/redis-heima-course/1785489741455.webp)
+![](/assets/images/posts/redis-heima-course/1785489762656.webp)
+
+### 4.10 UV 统计
+
+#### HyperLogLog 数据结构
+
+- UV: Unique Visitor, 唯一访客数, 用于统计网站的唯一访客数。1天内访问网站的用户数。多次访问网站，只计数一次。
+- PV: Page View, 页面访问量, 用于统计网站的页面访问量。1天内访问网站的页面数。多次访问网站，会计数多次。
+
+![](/assets/images/posts/redis-heima-course/1785738300940.webp)
+
+## 5. Redis消息队列
+
+- 消息队列：存放消息的结构，用于异步处理任务
+
+  - 消息队列：存储和管理消息，称为消费代理（message broker）
+  - 生产者：将消息放入队列中
+  - 消费者：从队列中取出消息并进行处理
+    ![](/assets/images/posts/redis-heima-course/1780628755849.webp)
+- Redis消息队列的优点：持久化存储，不受JVM内存限制
+- Redis消息队列的缺点：消息处理速度必须大于消息生产速度，否则会导致消息积压。只支持单消费者。
+
+### 5.1 消息队列的实现
+
+- Redis消息队列：使用Redis的List数据结构实现消息队列，生产者将消息放入List的右侧，消费者从List的左侧取出消息进行处理。
+
+  - ![](/assets/images/posts/redis-heima-course/1780626212987.webp)
+  - 只支持单消费者，多个消费者只能有一个消费者处理消息，其他消费者只能等待消息处理完成。
+- Redis消息队列：Pub/Sub模式，生产者将消息发布到指定的频道，消费者订阅该频道，当有消息发布到该频道时，消费者会收到消息并进行处理。
+
+  - ![](/assets/images/posts/redis-heima-course/1780626771666.webp)
+  - ![](/assets/images/posts/redis-heima-course/1780626864621.webp)
+- Redis消息队列：使用Redis的Stream数据结构实现消息队列，生产者将消息放入Stream中，消费者从Stream中取出消息进行处理。
+
+  - ![](/assets/images/posts/redis-heima-course/1780627200142.webp)
+  - ![](/assets/images/posts/redis-heima-course/1780627310838.webp)
+  - ![](/assets/images/posts/redis-heima-course/1780627475018.webp)
+  - ![](/assets/images/posts/redis-heima-course/1780627545341.webp)
+- Stream 消费者组：多个消费者可以组成一个消费者组，每个消费者组可以处理不同的消息。
+
+  - ![](/assets/images/posts/redis-heima-course/1780627713132.webp)
+  - ![](/assets/images/posts/redis-heima-course/1780627831011.webp)
+  - ![](/assets/images/posts/redis-heima-course/1780628036669.webp)
+  - XACK：确认消息处理完成，将消息从Stream中移除。
+  - XPENDING：查看消费者组中未处理的消息。
+  - ![](/assets/images/posts/redis-heima-course/1780628668169.webp)
+
+## 5. 分布式缓存（集群Redis）
+
+![](/assets/images/posts/redis-heima-course/1785738903378.webp)
+
+### 5.1 Redis 持久化策略
+
+#### 5.1.1 RDB(快照持久化)
+
+- RDB(快照持久化)：Redis默认的持久化策略，将Redis中的数据定时写入到磁盘中。
+
+![](/assets/images/posts/redis-heima-course/1785739065809.webp)
+
+![](/assets/images/posts/redis-heima-course/1785739234007.webp)
+
+![](/assets/images/posts/redis-heima-course/1785739669569.webp)
+
+#### 5.1.2 AOF(追加写入持久化)
+
+- AOF(追加写入持久化)：Redis的另一种持久化策略，将Redis中的数据追加写入到磁盘中。
+
+![](/assets/images/posts/redis-heima-course/1785739921868.webp)
+
+![](/assets/images/posts/redis-heima-course/1785740051513.webp)
+
+![](/assets/images/posts/redis-heima-course/1785740422588.webp)
+
+![](/assets/images/posts/redis-heima-course/1785740525548.webp)
+
+### 5.2 Redis 主从
+
+![img](/assets/images/posts/redis-heima-course/1785740774122.webp)
+
+#### 5.2.1 数据同步原理
+
+- 全量同步（第一次建立连接主从或无法完成增量同步时）
+![](/assets/images/posts/redis-heima-course/1785743942589.webp)
+![](/assets/images/posts/redis-heima-course/1785743906461.webp)
+
+
+- 增量同步（后续建立连接主从时）
+- ![](/assets/images/posts/redis-heima-course/1785744360241.webp)
+
+   - 优化Redis主从集群
+   - ![](/assets/images/posts/redis-heima-course/1785744536445.webp)
+
+
+#### 5.2.2 哨兵模式
+
+- Redis哨兵模式：用于监控Redis主从集群的状态，当主节点发生故障时，自动将从节点提升为主节点，并通知其他从节点进行切换。

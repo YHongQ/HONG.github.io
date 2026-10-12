@@ -9,5 +9,7 @@ main:
     url: /categories/
   - title: "标签"
     url: /tags/
+  - title: "图片欣赏"
+    url: /gallery/
   - title: "关于"
     url: /about/
