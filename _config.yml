@@ -9,9 +9,9 @@
 remote_theme: "mmistakes/minimal-mistakes@4.28.1"
 
 # ---- 皮肤 ----
-# Firefly themeColor.hue = 220（蓝色系），default 皮肤的蓝灰色调最接近
-# 可选：default / air / aqua / contrast / dark / dirt / neon / mint / plum / sunrise
-minimal_mistakes_skin: "default"
+# Catppuccin Latte：浅薰衣草白底 + 蓝链接的 pastel 浅色风格
+# 可选：default / air / aqua / catppuccin_latte / catppuccin_mocha / contrast / dark / dirt / mint / neon / plum / sunrise
+minimal_mistakes_skin: "catppuccin_latte"
 
 # ---- 站点基础信息（迁移自 Firefly src/config/siteConfig.ts）----
 title: "溄"                      # Firefly: siteConfig.title
