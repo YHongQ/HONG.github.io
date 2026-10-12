@@ -105,6 +105,8 @@ exclude:
   - docs
   - Gemfile
   - Gemfile.lock
+  - vendor
+  - .bundle
   - README.md
 
 # ---- 插件（均由 github-pages gem 提供，均在 GitHub Pages 白名单内）----
