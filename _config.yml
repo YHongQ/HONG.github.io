@@ -19,7 +19,7 @@ subtitle: "HONG"                 # Firefly: siteConfig.subtitle
 description: "HONG的个人博客"     # Firefly: siteConfig.description
 url: "https://yhongq.github.io"  # TODO: 确认为你的 GitHub 用户名主页（格式 https://<用户名>.github.io）
 baseurl: ""
-repository: "YHongQ/HONG.github.io"
+repository: "YHongQ/YHongQ.github.io"
 locale: "zh-CN"                  # Firefly: lang = "zh_CN"
 timezone: "Asia/Shanghai"        # Firefly: siteConfig.timezone
 
