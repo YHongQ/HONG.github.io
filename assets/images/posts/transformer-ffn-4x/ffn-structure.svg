@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c7f93"/>
+    </marker>
+  </defs>
+  <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#4c4f69">FFN(x) = max(0, x·W₁ + b₁)·W₂ + b₂ —— 对每个位置的 token 独立作用</text>
+
+  <!-- 输入 -->
+  <rect x="40" y="140" width="110" height="56" rx="6" fill="#e6e9ef" stroke="#bcc0cc"/>
+  <text x="95" y="165" text-anchor="middle" font-size="14" fill="#4c4f69">输入 x</text>
+  <text x="95" y="186" text-anchor="middle" font-size="13" fill="#1e66f5">R^512</text>
+
+  <line x1="150" y1="168" x2="200" y2="168" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+  <!-- W1 -->
+  <rect x="205" y="120" width="140" height="96" rx="6" fill="#ccddfb" stroke="#1e66f5"/>
+  <text x="275" y="158" text-anchor="middle" font-size="15" fill="#1e66f5">W₁</text>
+  <text x="275" y="180" text-anchor="middle" font-size="13" fill="#4c4f69">512 × 2048</text>
+  <text x="275" y="200" text-anchor="middle" font-size="12" fill="#6c6f85">升维</text>
+
+  <line x1="345" y1="168" x2="395" y2="168" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+  <!-- ReLU -->
+  <rect x="400" y="140" width="100" height="56" rx="6" fill="#ffdcc3" stroke="#fe640b"/>
+  <text x="450" y="172" text-anchor="middle" font-size="15" fill="#b44d09">ReLU</text>
+
+  <line x1="500" y1="168" x2="550" y2="168" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+  <!-- W2 -->
+  <rect x="555" y="120" width="140" height="96" rx="6" fill="#ccddfb" stroke="#1e66f5"/>
+  <text x="625" y="158" text-anchor="middle" font-size="15" fill="#1e66f5">W₂</text>
+  <text x="625" y="180" text-anchor="middle" font-size="13" fill="#4c4f69">2048 × 512</text>
+  <text x="625" y="200" text-anchor="middle" font-size="12" fill="#6c6f85">降维</text>
+
+  <line x1="695" y1="168" x2="745" y2="168" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+  <!-- 输出 -->
+  <rect x="750" y="140" width="110" height="56" rx="6" fill="#e6e9ef" stroke="#bcc0cc"/>
+  <text x="805" y="165" text-anchor="middle" font-size="14" fill="#4c4f69">FFN(x)</text>
+  <text x="805" y="186" text-anchor="middle" font-size="13" fill="#1e66f5">R^512</text>
+
+  <!-- 残差 -->
+  <path d="M 95 196 C 95 260 805 260 805 196" fill="none" stroke="#40a02b" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrow2)"/>
+  <text x="450" y="278" text-anchor="middle" font-size="13" fill="#2f7a1f">残差连接：输出 = x + FFN(x)</text>
+
+  <!-- 注释 -->
+  <text x="450" y="316" text-anchor="middle" font-size="13" fill="#6c6f85">中间层宽度 d_ff = 2048 = 4 × d_model，参数量 = 512×2048 + 2048×512 = 2·d_model·d_ff ≈ 210 万（每层）</text>
+</svg>

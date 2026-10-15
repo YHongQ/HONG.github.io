@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c7f93"/>
+    </marker>
+  </defs>
+  <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#4c4f69">一条流传甚广的因果链：火箭的宽度 ← 马屁股的宽度</text>
+
+  <!-- 节点 1：马屁股 -->
+  <rect x="20" y="70" width="150" height="90" rx="8" fill="#ffdcc3" stroke="#fe640b"/>
+  <text x="95" y="105" text-anchor="middle" font-size="14" font-weight="bold" fill="#b44d09">两匹马的屁股</text>
+  <text x="95" y="128" text-anchor="middle" font-size="12" fill="#6c6f85">拉车的马需要的间距</text>
+  <text x="95" y="146" text-anchor="middle" font-size="11" fill="#8c8fa1">约 2000 年前</text>
+
+  <line x1="170" y1="115" x2="200" y2="115" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+  <!-- 节点 2：战车轮距 -->
+  <rect x="205" y="70" width="150" height="90" rx="8" fill="#ffdcc3" stroke="#fe640b"/>
+  <text x="280" y="105" text-anchor="middle" font-size="14" font-weight="bold" fill="#b44d09">战车轮距</text>
+  <text x="280" y="128" text-anchor="middle" font-size="12" fill="#6c6f85">马车照此造轮子</text>
+  <text x="280" y="146" text-anchor="middle" font-size="11" fill="#8c8fa1">罗马道路上的车辙</text>
+
+  <line x1="355" y1="115" x2="385" y2="115" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+  <!-- 节点 3：公路车辙 -->
+  <rect x="390" y="70" width="150" height="90" rx="8" fill="#ccddfb" stroke="#1e66f5"/>
+  <text x="465" y="105" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e66f5">公路车辙</text>
+  <text x="465" y="128" text-anchor="middle" font-size="12" fill="#6c6f85">英国老路的轮距</text>
+  <text x="465" y="146" text-anchor="middle" font-size="11" fill="#8c8fa1">铁路由修马车的人修建</text>
+
+  <line x1="540" y1="115" x2="570" y2="115" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+  <!-- 节点 4：标准轨距 -->
+  <rect x="575" y="70" width="150" height="90" rx="8" fill="#ccddfb" stroke="#1e66f5"/>
+  <text x="650" y="105" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e66f5">标准轨距</text>
+  <text x="650" y="128" text-anchor="middle" font-size="12" fill="#6c6f85">4 英尺 8.5 英寸</text>
+  <text x="650" y="146" text-anchor="middle" font-size="11" fill="#8c8fa1">1435 毫米</text>
+
+  <line x1="725" y1="115" x2="755" y2="115" stroke="#7c7f93" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+  <!-- 节点 5：火箭助推器 -->
+  <rect x="760" y="70" width="120" height="90" rx="8" fill="#e5d5fb" stroke="#8839ef"/>
+  <text x="820" y="105" text-anchor="middle" font-size="14" font-weight="bold" fill="#8839ef">火箭助推器</text>
+  <text x="820" y="128" text-anchor="middle" font-size="12" fill="#6c6f85">犹他造好火车运</text>
+  <text x="820" y="146" text-anchor="middle" font-size="11" fill="#8c8fa1">宽度被隧道锁死</text>
+
+  <!-- 警示条 -->
+  <rect x="20" y="195" width="860" height="60" rx="8" fill="#fdf2f4" stroke="#d20f39" stroke-dasharray="6 4"/>
+  <text x="450" y="222" text-anchor="middle" font-size="13" fill="#d20f39">路径依赖：最初的道理早失效了，尺寸却锁死至今——史实存疑（都市传说），但是个锋利的思想实验</text>
+  <text x="450" y="244" text-anchor="middle" font-size="12" fill="#6c6f85">注意：这条因果链并无可靠史料支撑，NASA 官方亦不认可；它的价值在于揭示「被沿用 ≠ 被审视」</text>
+</svg>
