@@ -1,13 +1,13 @@
 ---
 layout: single
-title: "为什么 Transformer FFN 升维度再降维度是隐藏层的 4 倍？——第一性原理的固有思维"
+title: "为什么 Transformer FFN 的中间层是隐藏维度的 4 倍？——第一性原理的固有思维"
 date: 2026-10-15
 categories: ["学习笔记"]
 tags: ["Transformer", "FFN", "第一性原理", "深度学习", "大模型", "GPU"]
-description: "所有教程都说 FFN 中间层是隐藏层的 4 倍，却没人说为什么。这篇文章从 2017 年那篇论文讲起，用第一性原理把这个「常识」拆开：4 倍从哪来、为什么大约是 4 倍最合适、GPU 的张量单元又是怎么影响这个数字的。"
+description: "所有教程都说 FFN 中间层是隐藏维度的 4 倍，却没人说为什么。这篇文章从 2017 年那篇论文讲起，用第一性原理把这个「常识」拆开：4 倍从哪来、为什么大约是 4 倍最合适、GPU 的张量单元又是怎么影响这个数字的。"
 ---
 
-# 为什么 Transformer FFN 升维度再降维度是隐藏层的 4 倍？——第一性原理的固有思维
+# 为什么 Transformer FFN 的中间层是隐藏维度的 4 倍？——第一性原理的固有思维
 
 前阵子翻 LLaMA 的 `config.json`，看到这么两行：
 
@@ -48,7 +48,7 @@ description: "所有教程都说 FFN 中间层是隐藏层的 4 倍，却没人�
 
 ![Transformer 架构图](/assets/images/posts/transformer-ffn-4x/transformer-arch.svg)
 
-> 图 1：Transformer 的全貌。蓝色是负责 token 之间「通信」的多头注意力，紫色是负责每个 token 独立思考的 FFN，橙色那根线是编码器向解码器传递信息。今天所有大模型的骨架，和这张图差不太多。
+> 图 1：Transformer 的全貌。数据自下而上流动，每个子层都是「先多头注意力、再 FFN」，外面包着残差连接和层归一化。蓝色是负责 token 之间「通信」的注意力，紫色是负责每个 token 独立思考的 FFN，橙色那根线是编码器向解码器传递信息。今天所有大模型的骨架，和这张图差不太多。
 
 ## 二、拆开一台 Transformer：FFN 到底长什么样
 
